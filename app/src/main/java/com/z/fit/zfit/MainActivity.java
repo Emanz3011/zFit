@@ -72,13 +72,31 @@ public class MainActivity extends AppCompatActivity {
 
     public void HandleAlarms(){
         AlarmManager alarmObj = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
-        Long timeNow = new GregorianCalendar().getTimeInMillis();
-        Long timeTomorrow = timeNow - (timeNow % (24* 60 * 60 * 1000)) + (24* 60 * 60 * 1000);
-        Long timeTillnext730 = timeTomorrow + (450 * 60 * 1000);/*7.5 hours x 60 minutes = 450*/
 
-        System.out.println("Setting up alarm...");
+        Long wakeUpTime = Calculations.getTimeValue("7:30");
+
+        //Fixes strange time offset, most likely due to timezone
+        Long timeOffset = Calculations.getTimeValue("4:00");
+
+        Long timeNow = new GregorianCalendar().getTimeInMillis();
+        Long timeNowWithinDay = (timeNow - timeOffset) % Calculations.getTimeValue("24:00");
+        Long timeTomorrow = timeNow - timeNowWithinDay + Calculations.getTimeValue("24:00");
+        Long timeAtNextWakeUp = timeTomorrow + wakeUpTime;
+
+        //If it is before 7:30am, set the alarm to 7:30am today
+        //Otherwise, the time will default to 7:30am tomorrow
+        if (timeNowWithinDay < wakeUpTime) {
+            timeAtNextWakeUp = timeNow - timeNowWithinDay + wakeUpTime;
+            System.out.println("Setting early alarm{" + timeAtNextWakeUp + "}");
+        }
+        System.out.println("Wake up at           :" + wakeUpTime);
+        System.out.println("Time now is          :" + timeNow);
+        System.out.println("Time in day is       :" + timeNowWithinDay);
+        System.out.println("Time tomorrow is     :" + timeTomorrow);
+        System.out.println("Time till wake up is :" + (timeAtNextWakeUp - timeNow));
+
         Intent zSchedule = new Intent(MainActivity.this, Scheduler.class);
-        alarmObj.setExact(AlarmManager.RTC_WAKEUP,timeNow + timeTillnext730, PendingIntent.getActivity(this,0,zSchedule,PendingIntent.FLAG_CANCEL_CURRENT));
+        alarmObj.setExact(AlarmManager.RTC_WAKEUP, timeAtNextWakeUp, PendingIntent.getActivity(this, 0, zSchedule, PendingIntent.FLAG_CANCEL_CURRENT));
 
     }
 }

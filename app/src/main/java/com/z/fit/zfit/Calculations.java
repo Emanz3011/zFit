@@ -22,9 +22,13 @@ public class Calculations {
             return 100;
         }
         double percentage = ((Double.valueOf(Level)/Double.valueOf(Level-1)) - 1)*100;
-        System.out.println("Percentage"+percentage);
         return Math.round(percentage * 10)/10;
     }
 
-
+    public static Long getTimeValue(String sTime) {
+        Long time = Long.valueOf(0);
+        time += Long.valueOf(sTime.split(":")[0]) * (60 * 60 * 1000);
+        time += Long.valueOf(sTime.split(":")[1]) * (60 * 1000);
+        return time;
+    }
 }

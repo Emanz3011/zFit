@@ -27,7 +27,6 @@ public class FileHandler {
     }
 
     private void writeToFile(String data) {
-        System.out.println("Beginning method writeToFile()");
         try {
             File file = new File(context.getFilesDir(),filename);
             if (!file.exists()) {
@@ -36,29 +35,23 @@ public class FileHandler {
                 FileWriter fOut = new FileWriter(file);
                 fOut.write(data);
                 fOut.close();
-            System.out.println("Successfully wrote to file");
 
         }
         catch (IOException e) {
-            System.out.println("Failure..1.");
             Log.e("Exception", "File write failed: " + e.toString());
         }
     }
 
     private void createFile(){
-        System.out.println("Beginning method createFile()");
         File file = new File(context.getFilesDir(), filename);
         try {
             file.createNewFile();
-            System.out.println("Successfully created file");
         }catch(Exception e){
-            System.out.println("Failure..2.");
             Log.e("Exception", "File Create Failed: " + e.toString());
         }
     }
 
     private ArrayList<String> readFromFile() {
-        System.out.println("Beginning method readFromFile()");
         ArrayList<String> sReturn = new ArrayList<>();
 
         try {
@@ -72,13 +65,10 @@ public class FileHandler {
             while((sNextLine = textReader.readLine()) != null){
                 sReturn.add(sNextLine);
             }
-            System.out.println("Successfully read from file {" + sReturn.get(0) +"}");
         }
         catch (Exception e) {
-            System.out.println("Failure..3.");
             Log.e("Exception", "File Read Failed: " + e.toString());
         }
-
         return sReturn;
     }
 }
